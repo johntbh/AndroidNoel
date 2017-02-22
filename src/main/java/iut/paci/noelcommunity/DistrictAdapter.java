@@ -2,6 +2,7 @@ package iut.paci.noelcommunity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +48,11 @@ public class DistrictAdapter extends ArrayAdapter<District>
                 TextView description = (TextView) d.findViewById(R.id.description);
                 Button out = (Button) d.findViewById(R.id.quit);
                 out.setOnClickListener(new View.OnClickListener() {
-                    @Override
+                    @Override 
                     public void onClick(View v) {
                         d.dismiss();
+                        Intent intent = new Intent(v.getContext(),MapActivity.class);
+                        getContext().startActivity(intent);
                     }
                 });
                 title.setText(items.get(position).name);

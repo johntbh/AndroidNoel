@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
@@ -17,7 +18,8 @@
             android:layout_centerHorizontal="true"
             android:id="@+id/title"
             android:textAlignment="textStart"
-            android:capitalize="words" />
+            android:capitalize="words"
+            android:background="@android:color/holo_blue_dark" />
 
         <Button
             android:text="Button"
