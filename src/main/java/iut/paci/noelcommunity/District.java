@@ -1,9 +1,12 @@
 package iut.paci.noelcommunity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class District
+class District
 {
     int id;
     String name;
@@ -11,8 +14,11 @@ public class District
     double longitude;
     double latitude;
     int imageRessourceId;
+    Store[] stores;
+    Deposite[] deposites;
 
-    public District(int id, String name, String description, double latitude, double longitude, int imageRessourceId)
+
+    private District(int id, String name, String description, double latitude, double longitude, int imageRessourceId)
     {
         this.id = id;
         this.name = name;
@@ -22,7 +28,13 @@ public class District
         this.imageRessourceId = imageRessourceId;
     }
 
-    public static ArrayList<District> getDistricts()
+    public static District fromJson(String json){
+        Gson gson = new GsonBuilder().setDateFormat("HH:mm:ss").create();
+        return gson.fromJson(json, District.class);
+    }
+
+
+    static ArrayList<District> getDistricts()
     {
         String Descr1 = "Le 1e arrondissement de Paris est l'un des arrondissements les plus centraux du cœur historique de Paris. Il comprend notamment l'un des plus anciens quartiers de la ville, le quartier des Halles, qui date du tout début du Moyen Âge.";
         String Descr2 = "Le 2e arrondissement de Paris est le produit de l'extension de Paris aux XV et XVI siècles. Les premières habitations urbaines datent cependant du XIV siècle. Ainsi, l'enceinte de Charles V s'étendait déjà jusqu'à la rue d'Aboukir.";

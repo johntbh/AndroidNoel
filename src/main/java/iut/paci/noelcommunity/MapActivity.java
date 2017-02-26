@@ -2,6 +2,7 @@ package iut.paci.noelcommunity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -75,10 +76,19 @@ public class MapActivity extends AppCompatActivity {
 
         LatLong district = new LatLong(lat,log);
 
-        this.drawMarker(district);
+        this.drawMarker(district,R.drawable.ic_place_black_24dp);
         mapView.setCenter(district);
         mapView.setZoomLevel((byte) 12);
 
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .authority("server") // TODO: Input the good server
+                .appendPath("community")
+                .appendPath("getDistrict.php")
+                .appendQueryParameter("id", Integer.toString(1));
+        String urlString = builder.build().toString();
+
+        new DistrictTask(MapActivity.this).execute(urlString);
     }
 
     public void onDestroy() {
@@ -87,8 +97,8 @@ public class MapActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void drawMarker(LatLong geoPoint) {
-        Drawable drawable = getResources().getDrawable(R.drawable.ic_place_black_24dp);
+    public void drawMarker(LatLong geoPoint, int imageRessourceId) {
+        Drawable drawable = getResources().getDrawable(imageRessourceId);
         Bitmap bitmap =
                 AndroidGraphicFactory.convertToBitmap(drawable);
         bitmap.scaleTo(130,130);
@@ -122,6 +132,15 @@ public class MapActivity extends AppCompatActivity {
         for(LatLong geoPoint : path)
             coordinateList.add(geoPoint);
         mapView.getLayerManager().getLayers().add(polyline);
+    }
+
+    public void drawDistrict(District district){
+        for(Store s : district.stores){
+            this.drawMarker(new LatLong(s.latitude,s.longitude),R.drawable.ic_local_florist_black_24dp);
+        }
+        for(Deposite d : district.deposites){
+            this.drawMarker(new LatLong(d.latitude,d.longitude),R.drawable.ic_delete_black_24dp);
+        }
     }
 }
 
