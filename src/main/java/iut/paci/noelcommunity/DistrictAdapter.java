@@ -3,6 +3,7 @@ package iut.paci.noelcommunity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,10 @@ public class DistrictAdapter extends ArrayAdapter<District>
                     public void onClick(View v) {
                         d.dismiss();
                         Intent intent = new Intent(v.getContext(),MapActivity.class);
+                        Bundle extra = new Bundle();
+                        extra.putDouble("lat",items.get(position).latitude);
+                        extra.putDouble("long",items.get(position).longitude);
+                        intent.putExtras(extra);
                         getContext().startActivity(intent);
                     }
                 });
