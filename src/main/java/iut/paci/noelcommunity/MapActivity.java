@@ -7,7 +7,9 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.mapsforge.core.graphics.Bitmap;
@@ -73,7 +75,9 @@ public class MapActivity extends AppCompatActivity {
         Bundle extra = intent.getExtras();
         double lat = extra.getDouble("lat");
         double log = extra.getDouble("long");
+        int district_id = extra.getInt("district_id");
 
+        Log.d("district_id",Integer.toString(district_id));
         LatLong district = new LatLong(lat,log);
 
         this.drawMarker(district,R.drawable.ic_place_black_24dp);
@@ -82,10 +86,10 @@ public class MapActivity extends AppCompatActivity {
 
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
-                .authority("server") // TODO: Input the good server
+                .authority("iut.96.lt") // TODO: Input the good server
                 .appendPath("community")
                 .appendPath("getDistrict.php")
-                .appendQueryParameter("id", Integer.toString(1));
+                .appendQueryParameter("id", Integer.toString(district_id));
         String urlString = builder.build().toString();
 
         new DistrictTask(MapActivity.this).execute(urlString);
@@ -98,26 +102,64 @@ public class MapActivity extends AppCompatActivity {
     }
 
     public void drawMarker(LatLong geoPoint, int imageRessourceId) {
+        this.drawMarker(geoPoint,imageRessourceId,"",null);
+    }
+
+    public void drawMarker(LatLong geoPoint, int imageRessourceId, String dialog_class, final Place p) {
         Drawable drawable = getResources().getDrawable(imageRessourceId);
-        Bitmap bitmap =
-                AndroidGraphicFactory.convertToBitmap(drawable);
+        Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
         bitmap.scaleTo(130,130);
-        Marker marker = new Marker(geoPoint,
-            bitmap,
-            0,
-            -bitmap.getHeight() / 2)
-            {
-                @Override
-                public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
-                    if (contains(viewPos, tapPoint)) {
-                        Toast.makeText(MapActivity.this,
-                                "clicked marker",
-                                Toast.LENGTH_SHORT).show();
-                        return true;
+        Marker marker;
+        switch(dialog_class){
+            case "store":
+                marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2)
+                {
+                    @Override
+                    public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
+                        if (contains(viewPos, tapPoint)) {
+                            DialogStore ds = new DialogStore(MapActivity.this);
+                            ds.show();
+                            TextView name = (TextView) ds.findViewById(R.id.store_name);
+                            name.setText(p.name);
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            };
+                };
+                break;
+            case "deposite":
+                marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2)
+                {
+                    @Override
+                    public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
+                        if (contains(viewPos, tapPoint)) {
+                            DialogDeposite dd = new DialogDeposite(MapActivity.this);
+                            dd.show();
+                            TextView name = (TextView) dd.findViewById(R.id.deposite_name);
+                            name.setText(p.name);
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+                break;
+            default:
+                marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2)
+                {
+                    @Override
+                    public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
+                        if (contains(viewPos, tapPoint)) {
+                            Toast.makeText(MapActivity.this,
+                                    "clicked marker",
+                                    Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+                break;
+
+        }
         mapView.getLayerManager().getLayers().add(marker);
     }
 
@@ -136,10 +178,10 @@ public class MapActivity extends AppCompatActivity {
 
     public void drawDistrict(District district){
         for(Store s : district.stores){
-            this.drawMarker(new LatLong(s.latitude,s.longitude),R.drawable.ic_local_florist_black_24dp);
+            this.drawMarker(new LatLong(s.latitude,s.longitude),R.drawable.ic_local_florist_black_24dp,"store",s);
         }
         for(Deposite d : district.deposites){
-            this.drawMarker(new LatLong(d.latitude,d.longitude),R.drawable.ic_delete_black_24dp);
+            this.drawMarker(new LatLong(d.latitude,d.longitude),R.drawable.ic_delete_black_24dp,"deposite",d);
         }
     }
 }

@@ -56,6 +56,7 @@ public class DistrictAdapter extends ArrayAdapter<District>
                         Bundle extra = new Bundle();
                         extra.putDouble("lat",items.get(position).latitude);
                         extra.putDouble("long",items.get(position).longitude);
+                        extra.putInt("district_id",position+1);
                         intent.putExtras(extra);
                         getContext().startActivity(intent);
                     }

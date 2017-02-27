@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class District
 {
@@ -14,8 +15,8 @@ class District
     double longitude;
     double latitude;
     int imageRessourceId;
-    Store[] stores;
-    Deposite[] deposites;
+    List<Store> stores;
+    List<Deposite> deposites;
 
 
     private District(int id, String name, String description, double latitude, double longitude, int imageRessourceId)
@@ -28,7 +29,7 @@ class District
         this.imageRessourceId = imageRessourceId;
     }
 
-    public static District fromJson(String json){
+    static District fromJson(String json){
         Gson gson = new GsonBuilder().setDateFormat("HH:mm:ss").create();
         return gson.fromJson(json, District.class);
     }

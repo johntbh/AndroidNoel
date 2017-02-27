@@ -2,10 +2,6 @@ package iut.paci.noelcommunity;
 
 import java.util.Date;
 
-/**
- * Created by user on 27/02/2017.
- */
-
 class Store extends Place {
     int treeCount;
 

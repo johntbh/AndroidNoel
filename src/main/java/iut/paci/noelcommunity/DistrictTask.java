@@ -70,6 +70,5 @@ class DistrictTask extends AsyncTask<String, Void, String> {
 
         District district = District.fromJson(result);
         this.activity.drawDistrict(district);
-
     }
 }
