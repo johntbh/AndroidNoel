@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,55 +111,32 @@ public class MapActivity extends AppCompatActivity {
         Bitmap bitmap = AndroidGraphicFactory.convertToBitmap(drawable);
         bitmap.scaleTo(130,130);
         Marker marker;
-        switch(dialog_class){
-            case "store":
-                marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2)
-                {
-                    @Override
-                    public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
-                        if (contains(viewPos, tapPoint)) {
-                            DialogStore ds = new DialogStore(MapActivity.this);
-                            ds.show();
-                            TextView name = (TextView) ds.findViewById(R.id.store_name);
-                            name.setText(p.name);
-                            return true;
-                        }
-                        return false;
+        if(p != null){
+            marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2) {
+                @Override
+                public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint) {
+                    if (contains(viewPos, tapPoint)) {
+                        p.draw(MapActivity.this);
+                        return true;
                     }
-                };
-                break;
-            case "deposite":
-                marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2)
-                {
-                    @Override
-                    public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
-                        if (contains(viewPos, tapPoint)) {
-                            DialogDeposite dd = new DialogDeposite(MapActivity.this);
-                            dd.show();
-                            TextView name = (TextView) dd.findViewById(R.id.deposite_name);
-                            name.setText(p.name);
-                            return true;
-                        }
-                        return false;
+                    return false;
+                }
+            };
+        }
+        else{
+            marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2)
+            {
+                @Override
+                public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
+                    if (contains(viewPos, tapPoint)) {
+                        Toast.makeText(MapActivity.this,
+                                "clicked marker",
+                                Toast.LENGTH_SHORT).show();
+                        return true;
                     }
-                };
-                break;
-            default:
-                marker = new Marker(geoPoint, bitmap, 0, -bitmap.getHeight() / 2)
-                {
-                    @Override
-                    public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint){
-                        if (contains(viewPos, tapPoint)) {
-                            Toast.makeText(MapActivity.this,
-                                    "clicked marker",
-                                    Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                        return false;
-                    }
-                };
-                break;
-
+                    return false;
+                }
+            };
         }
         mapView.getLayerManager().getLayers().add(marker);
     }
