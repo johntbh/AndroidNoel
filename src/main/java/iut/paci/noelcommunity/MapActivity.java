@@ -19,6 +19,8 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.core.graphics.Color;
 import org.mapsforge.core.graphics.Paint;
@@ -37,12 +39,15 @@ import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MapActivity extends AppCompatActivity {
     MapView mapView;
     TileCache tileCache;
     TileRendererLayer tileRendererLayer;
+    LatLong center;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,9 +133,17 @@ public class MapActivity extends AppCompatActivity {
             Log.d("MapActivity", "position trouvée");
             LatLong me = new LatLong(location.getLatitude(),location.getLongitude());
             this.mapView.setCenter(me);
+            this.center = me;
         }
-        else
+        else {
             Log.d("MapActivity", "aucune position connue");
+            LatLong versailles = new LatLong(48.8420349,2.2679613000000245);
+            this.mapView.setCenter(versailles);
+            //this.mapView.setCenter(district);
+
+            //this.center = district;
+            this.center = versailles;
+        }
 
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -186,6 +199,12 @@ public class MapActivity extends AppCompatActivity {
                 public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint) {
                     if (contains(viewPos, tapPoint)) {
                         p.draw(MapActivity.this);
+
+                        String json = "{locations:[{latLng:{lat:"+center.getLatitude()+",lng:"+center.getLongitude()+"}},{latLng:{lat:"+geoPoint.getLatitude()+",lng:"+geoPoint.getLongitude()+"}}]}";
+
+                        String url = "https://www.mapquestapi.com/directions/v2/route?key=deamSBfbxULjOkFvP9dW1QiAKewVYxVg&json="+json+"&outFormat=json";
+                        Log.d("url",url);
+                        new DirectionTask(MapActivity.this).execute(url);
                         return true;
                     }
                     return false;

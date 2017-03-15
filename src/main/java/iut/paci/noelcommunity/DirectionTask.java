@@ -92,6 +92,7 @@ class DirectionTask extends AsyncTask<String, Void, String> {
         {
             e.printStackTrace();
         }
+        Log.d("path",path.toString());
         this.activity.drawPath(path);
     }
 }
