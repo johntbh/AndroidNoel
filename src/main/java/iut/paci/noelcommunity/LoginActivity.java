@@ -28,8 +28,17 @@ public class LoginActivity extends AppCompatActivity {
         String s_login = login.getText().toString();
         String s_password = password.getText().toString();
 
-        Toast.makeText(getApplicationContext(), "Login: "+s_login+" Password: "+s_password, Toast.LENGTH_SHORT)
-                .show();
+        if (!s_login.equals("John")) {
+            Toast.makeText(getApplicationContext(), "Le login est incorrect.", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
+        if (!s_password.equals("test")) {
+            Toast.makeText(getApplicationContext(), "Le mdp est incorrect.", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
 
         extra.putString("login",s_login);
         extra.putString("password",s_password);

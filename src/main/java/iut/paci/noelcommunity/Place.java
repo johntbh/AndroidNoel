@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.Window;
 import android.widget.TextView;
 
+import org.mapsforge.core.model.LatLong;
+
 import java.util.Date;
 
 /**
@@ -31,11 +33,5 @@ abstract class Place {
         this.idRessourceImage = idRessourceImage;
     }
 
-    void draw(Context context){
-        DialogStore ds = new DialogStore(context);
-        ds.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        ds.show();
-        TextView name = (TextView) ds.findViewById(R.id.store_name);
-        name.setText(this.name);
-    }
+    abstract void draw(final Context context, final LatLong center);
 }

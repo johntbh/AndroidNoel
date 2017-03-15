@@ -33,6 +33,7 @@ class DistrictTask extends AsyncTask<String, Void, String> {
         String result = "";
         InputStream stream = null;
         HttpURLConnection con = null;
+        Log.d("MapActivity", args[0]);
 
         try {
             URL url = new URL(args[0]);

@@ -31,6 +31,7 @@ import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.util.AndroidUtil;
 import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.datastore.MapDataStore;
+import org.mapsforge.map.layer.Layer;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Marker;
 import org.mapsforge.map.layer.overlay.Polyline;
@@ -48,6 +49,7 @@ public class MapActivity extends AppCompatActivity {
     TileCache tileCache;
     TileRendererLayer tileRendererLayer;
     LatLong center;
+    ArrayList<Integer> path_index = new ArrayList<Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,13 +200,7 @@ public class MapActivity extends AppCompatActivity {
                 @Override
                 public boolean onTap(LatLong geoPoint, Point viewPos, Point tapPoint) {
                     if (contains(viewPos, tapPoint)) {
-                        p.draw(MapActivity.this);
-
-                        String json = "{locations:[{latLng:{lat:"+center.getLatitude()+",lng:"+center.getLongitude()+"}},{latLng:{lat:"+geoPoint.getLatitude()+",lng:"+geoPoint.getLongitude()+"}}]}";
-
-                        String url = "https://www.mapquestapi.com/directions/v2/route?key=deamSBfbxULjOkFvP9dW1QiAKewVYxVg&json="+json+"&outFormat=json";
-                        Log.d("url",url);
-                        new DirectionTask(MapActivity.this).execute(url);
+                        p.draw(MapActivity.this,center);
                         return true;
                     }
                     return false;
@@ -231,23 +227,38 @@ public class MapActivity extends AppCompatActivity {
 
     public void drawPath(List<LatLong> path){
         Paint paint = AndroidGraphicFactory.INSTANCE.createPaint();
-        paint.setColor(Color.RED);
+        paint.setColor(Color.RED); // TODO : Griser les anciens chemins et lors du reclick, no api but refocus old route
         paint.setStrokeWidth(15);
         paint.setStyle(Style.STROKE);
+
         Polyline polyline = new Polyline(paint,
                 AndroidGraphicFactory.INSTANCE);
         List<LatLong> coordinateList = polyline.getLatLongs();
         for(LatLong geoPoint : path)
             coordinateList.add(geoPoint);
+
+        Polyline gray;
+        for(Integer i : path_index){
+            gray = (Polyline) mapView.getLayerManager().getLayers().get(i);
+            if(!coordinateList.equals(gray.getLatLongs())){
+                gray.getPaintStroke().setColor(Color.BLUE);
+            }else{
+                gray.getPaintStroke().setColor(Color.RED);
+            }
+        }
+
         mapView.getLayerManager().getLayers().add(polyline);
+        int index = mapView.getLayerManager().getLayers().indexOf(polyline);
+        path_index.add(index);
+
     }
 
     public void drawDistrict(District district){
         for(Store s : district.stores){
-            this.drawMarker(new LatLong(s.latitude,s.longitude),R.drawable.ic_local_florist_black_24dp,"store",s);
+            this.drawMarker(new LatLong(s.latitude,s.longitude),R.drawable.ic_sapin,"store",s);
         }
         for(Deposite d : district.deposites){
-            this.drawMarker(new LatLong(d.latitude,d.longitude),R.drawable.ic_delete_black_24dp,"deposite",d);
+            this.drawMarker(new LatLong(d.latitude,d.longitude),R.drawable.ic_pas_sapin,"deposite",d);
         }
     }
 

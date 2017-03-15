@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -44,6 +45,7 @@ public class DistrictAdapter extends ArrayAdapter<District>
             @Override
             public void onClick(View v) {
                 final DialogDistrict d = new DialogDistrict(v.getContext());
+                d.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 d.show();
                 TextView title = (TextView) d.findViewById(R.id.title);
                 TextView description = (TextView) d.findViewById(R.id.description);
